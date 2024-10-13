@@ -18,6 +18,7 @@ import javax.swing.JPanel;
 public class ChessView extends JPanel {
 
 	private static final long serialVersionUID = 2830999099569753904L;
+	ChessDelegate chessDelegate;
 	int originX = 75;
 	int originY = 75;
 	int cellSize = 600 / 8;
@@ -26,7 +27,7 @@ public class ChessView extends JPanel {
 
 	public ChessView() {
 		String[] imgNames = { "bishopbl", "bishopw", "horsebl", "horsew", "kingbl", "kingw", "pawnbl", "pawnw",
-				"queenbl", "quenw", "rookbl", "rookw", };
+				"queenbl", "queenw", "rookbl", "rookw", };
 		for (String imgN : imgNames) {
 			try {
 				Image img = loadImage(imgN + ".png");
@@ -47,10 +48,23 @@ public class ChessView extends JPanel {
 		super.paintChildren(g);
 		Graphics2D g2 = (Graphics2D) g;
 		drawBoard(g2);
-
+		drawPieces(g2);
 	}
-	private void drawImage(Graphics2D g2,Image img,int row,int col) {
-		g2.drawImage(img, row*cellSize, row*cellSize, cellSize, cellSize , null);
+	private void drawPieces(Graphics2D g2) {
+		for (int row=7;row>=0;row--) {
+			for (int col = 0;col<8;col++) {
+				ChessPiece p =chessDelegate.pieceAt(col, row);
+				if (p!=null) {
+					System.out.println(p.rank+" "+p.player+" "+p.col+" "+p.row);
+					drawImage(g2, p.imgName, col, row);
+				}
+				
+			}
+		}
+	}
+	private void drawImage(Graphics2D g2,String imgName,int col,int row) {
+		Image img = keyNameValueImage.get(imgName);
+		g2.drawImage(img, row*cellSize, col*cellSize, cellSize, cellSize , null);
 	}
 	private Image loadImage(String imgFileName) throws URISyntaxException, IOException {
 		ClassLoader classLoader = getClass().getClassLoader();
